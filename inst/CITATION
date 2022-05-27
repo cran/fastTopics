@@ -1,0 +1,37 @@
+citHeader("To cite the fastTopics package, please use:")
+
+citEntry(entry = "Article",
+         title = paste("Visualizing the structure of RNA-seq expression data",
+                       "using grade of membership models"),
+         author = personList(as.person("Kushal K. Dey"),
+                             as.person("Chiaowen Joyce Hsiao"),
+                             as.person("Matthew Stephens")),
+         journal = "PLoS Genetics",
+         volume  = 13,
+         number  = 3,
+         pages   = "e1006599",
+         year = "2017",
+         url = "https://doi.org/10.1371/journal.pgen.1006599",
+         textVersion =
+           paste("Kushal K. Dey, Chiaowen Joyce Hsiao and Matthew Stephens",
+                 "(2017). Visualizing the structure of RNA-seq expression",
+                 "data using grade of membership models. PLoS Genetics",
+                 "13(3), e1006599, doi:10.1371/journal.pgen.1006599"))
+
+citEntry(entry = "Article",
+  title   = paste("Non-negative matrix factorization algorithms greatly",
+                  "improve topic model fits"),
+  author  = personList(as.person("Peter Carbonetto"),
+                       as.person("Abhishek Sarkar"),
+                       as.person("Zihao Wang"),
+                       as.person("Matthew Stephens")),
+  journal = "arXiv",
+  volume  = "2105.13440",
+  eprint  = "2105.13440",
+  year    = "2021",
+  archivePrefix = "arXiv",
+  url = "https://arxiv.org/abs/2105.13440",
+  textVersion = paste("Peter Carbonetto, Abhishek Sarkar, Zihao Wang",
+                      "and Matthew Stephens (2021). Non-negative matrix",
+                      "factorization algorithms greatly improve topic model",
+                      "fits. arXiv, 2105.13440, 2021."))
