@@ -39,7 +39,7 @@
 #'
 #'   \item{fit}{Poisson non-negative matrix factorization (NMF) fitted
 #'     to the UMI count data \code{counts}, with rank \code{k = 6}. See
-#'     the vignette how the Poisson NMF model fitting was performed.}}
+#'     the vignette how the Poisson NMF model fitting was performed.}
 #'
 #' @source
 #' \url{https://www.10xgenomics.com/resources/datasets}

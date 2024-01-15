@@ -85,9 +85,13 @@
 #'
 #' \item{\code{nc}}{Number of threads used in the multithreaded
 #'   computations. Note that the multithreading relies on forking hence
-#'   is not available on Windows; will return an error on Windows
-#'   unless \code{nc = 1}. See \code{\link[parallel]{mclapply}} for
-#'   details.}
+#'   is not available on Windows; will return an error on Windows unless
+#'   \code{nc = 1}. See \code{\link[parallel]{mclapply}} for
+#'   details. Also note that if R is installed with a multithreading
+#'   numerical linear algebra library (e.g., OpenBLAS), for best
+#'   performance the number of threads used by the linear algebra
+#'   library should be set to 1 (i.e., no multithreading). This can be
+#'   controlled for example using the RhpcBLASctl package.}
 #'
 #' \item{\code{nsplit}}{The number of data splits used in the
 #'   multithreaded computations (only relevant when \code{nc > 1}). More
@@ -96,8 +100,10 @@
 #'   overhead in the call to \code{\link[pbapply]{pblapply}}.}}
 #' 
 #' @param fit An object of class \dQuote{poisson_nmf_fit} or
-#'   \dQuote{multinom_topic_model_fit}. If a Poisson NMF fit is provided
-#'   as input, the corresponding multinomial topic model fit is
+#'   \dQuote{multinom_topic_model_fit}, or an n x k matrix of topic
+#'   proportions, where k is the number of topics. (The elements in each
+#'   row of this matrix should sum to 1.) If a Poisson NMF fit is
+#'   provided as input, the corresponding multinomial topic model fit is
 #'   automatically recovered using \code{\link{poisson2multinom}}.
 #'
 #' @param X The n x m counts matrix. It can be a sparse matrix (class
@@ -235,10 +241,23 @@ de_analysis <- function (fit, X, s = rowSums(X), pseudocount = 0.01,
   # CHECK AND PROCESS INPUTS
   # ------------------------
   # Check and process input argument "fit".
+  if (is.matrix(fit)) {
+    L <- fit
+    if (any((rowSums(L) - 1) > 1e-15))
+      warning("\"fit\" is a matrix but may not be topic proportions matrix; ",
+              "rowSums(X) should be a vector of all ones")
+    m <- ncol(X)
+    k <- ncol(fit)
+    F <- matrix(1,m,k)
+    rownames(F) <- colnames(X)
+    colnames(F) <- colnames(L)
+    fit <- init_poisson_nmf(X,F = F,L = L)
+    fit <- poisson2multinom(fit)
+  }
   if (!(inherits(fit,"poisson_nmf_fit") |
         inherits(fit,"multinom_topic_model_fit")))
     stop("Input \"fit\" should be an object of class \"poisson_nmf_fit\" or ",
-         "\"multinom_topic_model_fit\"")
+         "\"multinom_topic_model_fit\", or a matrix of topic proportions")
   if (inherits(fit,"poisson_nmf_fit"))
     fit <- poisson2multinom(fit)
   

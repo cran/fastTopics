@@ -105,8 +105,9 @@ test_that(paste("de_analysis with and without multithreading, using a",
                 "sparse or dense counts matrix, with shrink.method =",
                 "\"none\", produces the same result"),{
 
-  # Skip this test on CRAN because it takes too long.
-  skip_if(on_cran) 
+  # Skip this test on CRAN and CI because it takes too long.
+  skip_if(on_cran)
+  skip_on_ci()
 
   # Simulate gene expression data.
   set.seed(1)
@@ -151,8 +152,9 @@ test_that(paste("de_analysis with and without multithreading, using a",
                 "sparse or dense counts matrix, with shrink.method =",
                 "\"ash\", produces the same result"),{
                     
-  # Skip this test on CRAN because it takes too long.
-  skip_if(on_cran) 
+  # Skip this test on CRAN and CI because it takes too long.
+  skip_if(on_cran)
+  skip_on_ci()
 
   # Simulate gene expression data.
   set.seed(1)
@@ -205,9 +207,10 @@ test_that(paste("de_analysis with s = rowSums(X) closely recovers true",
                 "probabilities (relative gene expression levels) when",
                 "provided with the true topic proportions"),{
                     
-  # Skip this test on CRAN because it takes too long.
+  # Skip this test on CRAN and CI because it takes too long.
   skip_if(on_cran)
-
+  skip_on_ci()
+  
   # Simulate gene expression data.
   set.seed(1)
   n   <- 800
@@ -227,25 +230,34 @@ test_that(paste("de_analysis with s = rowSums(X) closely recovers true",
   expect_equal(dat$F,de$F,scale = 1,tolerance = 1e-4)
 
   # Create a volcano plot from the de_analysis output.
-  p1 <- volcano_plot(de,k = 1)
-  p2 <- volcano_plotly(de,k = 1)
+  p1 <- volcano_plot(de,k = 1,y = "z")
+  p2 <- volcano_plot(de,k = 1,y = "f0")
+  p3 <- volcano_plotly(de,k = 1,y = "z")
+  p4 <- volcano_plotly(de,k = 1,y = "f0")
   expect_s3_class(p1,"ggplot")
-  expect_s3_class(p2,"plotly")
+  expect_s3_class(p2,"ggplot")
+  expect_s3_class(p3,"plotly")
+  expect_s3_class(p4,"plotly")
 
   # Check that the volcano plots also work without the adaptive
   # shrinkage step.
   de <- de_analysis(fit,X,shrink.method = "none",verbose = FALSE)
-  p1 <- volcano_plot(de,k = 1)
-  p2 <- volcano_plotly(de,k = 1)
+  p1 <- volcano_plot(de,k = 1,y = "z")
+  p2 <- volcano_plot(de,k = 1,y = "f0")
+  p3 <- volcano_plotly(de,k = 1,y = "z")
+  p4 <- volcano_plotly(de,k = 1,y = "f0")
   expect_s3_class(p1,"ggplot")
-  expect_s3_class(p2,"plotly")
+  expect_s3_class(p2,"ggplot")
+  expect_s3_class(p3,"plotly")
+  expect_s3_class(p4,"plotly")
 })
 
 test_that(paste("Pairwise and \"least extreme\" LFC statistics are correct",
                 "for k = 2 topics, with shrink.method = \"none\""),{
 
-  # Skip this test on CRAN because it takes too long.
+  # Skip this test on CRAN and CI because it takes too long.
   skip_if(on_cran)
+  skip_on_ci()
   
   # Simulate gene expression data.
   set.seed(1)
@@ -299,8 +311,9 @@ test_that(paste("Pairwise and \"least extreme\" LFC statistics are correct",
 test_that(paste("Pairwise and \"least extreme\" LFC statistics are correct",
                 "for k = 2 topics, with shrink.method = \"ash\""),{
 
-  # Skip this test on CRAN because it takes too long.
+  # Skip this test on CRAN and CI because it takes too long.
   skip_if(on_cran)
+  skip_on_ci()
   
   # Simulate gene expression data.
   set.seed(1)
@@ -353,8 +366,9 @@ test_that(paste("Pairwise and \"least extreme\" LFC statistics are correct",
 
 test_that("no output from de_analysis when verbose = FALSE",{
 
-  # Skip this test on CRAN because it takes too long.
+  # Skip this test on CRAN and CI because it takes too long.
   skip_if(on_cran)
+  skip_on_ci()
   
   set.seed(1)
   X <- simulate_multinom_gene_data(n = 50,m = 100,k = 3,sparse = FALSE)$X
@@ -375,4 +389,32 @@ test_that("no output from de_analysis when verbose = FALSE",{
   expect_equal(out2,character(0))
   expect_equal(out3,character(0))
   expect_equal(out4,character(0))
+})
+
+test_that("de_analysis provided with fit and fit$L give the same result",{
+
+  # Simulate a gene expression data set.
+  set.seed(1)
+  n   <- 100
+  m   <- 200
+  k   <- 4
+  dat <- simulate_multinom_gene_data(n,m,k,sparse = TRUE)
+  X   <- dat$X
+  L   <- dat$L
+
+  # Fit a topic model with k = 4 topics to the simulatd gene
+  # expression data.
+  capture.output(fit <- fit_topic_model(X,k = 4,init.method = "random"))
+
+  set.seed(1)
+  capture.output(de1 <- de_analysis(fit,X,control = list(ns = 100)))
+  
+  set.seed(1)
+  capture.output(de2 <- de_analysis(fit$L,X,control = list(ns = 100)))
+
+  de1["ash"] <- NULL
+  de2["ash"] <- NULL
+  de1["svalue"] <- NULL
+  de2["svalue"] <- NULL
+  expect_equal(de1,de2,scale = 1,tolerance = 1e-8)
 })

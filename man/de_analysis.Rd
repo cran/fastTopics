@@ -22,8 +22,10 @@ de_analysis_control_default()
 }
 \arguments{
 \item{fit}{An object of class \dQuote{poisson_nmf_fit} or
-\dQuote{multinom_topic_model_fit}. If a Poisson NMF fit is provided
-as input, the corresponding multinomial topic model fit is
+\dQuote{multinom_topic_model_fit}, or an n x k matrix of topic
+proportions, where k is the number of topics. (The elements in each
+row of this matrix should sum to 1.) If a Poisson NMF fit is
+provided as input, the corresponding multinomial topic model fit is
 automatically recovered using \code{\link{poisson2multinom}}.}
 
 \item{X}{The n x m counts matrix. It can be a sparse matrix (class
@@ -188,9 +190,13 @@ algorithm settings (as they are defined by
 
 \item{\code{nc}}{Number of threads used in the multithreaded
   computations. Note that the multithreading relies on forking hence
-  is not available on Windows; will return an error on Windows
-  unless \code{nc = 1}. See \code{\link[parallel]{mclapply}} for
-  details.}
+  is not available on Windows; will return an error on Windows unless
+  \code{nc = 1}. See \code{\link[parallel]{mclapply}} for
+  details. Also note that if R is installed with a multithreading
+  numerical linear algebra library (e.g., OpenBLAS), for best
+  performance the number of threads used by the linear algebra
+  library should be set to 1 (i.e., no multithreading). This can be
+  controlled for example using the RhpcBLASctl package.}
 
 \item{\code{nsplit}}{The number of data splits used in the
   multithreaded computations (only relevant when \code{nc > 1}). More
