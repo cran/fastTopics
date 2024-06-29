@@ -1,8 +1,8 @@
 Encoding: UTF-8
 Type: Package
 Package: fastTopics
-Version: 0.6-163
-Date: 2024-01-15
+Version: 0.6-186
+Date: 2024-06-28
 Title: Fast Algorithms for Fitting Topic Models and Non-Negative Matrix
         Factorizations to Count Data
 Authors@R: c(person("Peter","Carbonetto",role=c("aut","cre"),
@@ -16,8 +16,10 @@ Authors@R: c(person("Peter","Carbonetto",role=c("aut","cre"),
 	     person("Paul C.","Boutros",role="ctb"),
 	     person("Minzhe","Wang",role="ctb"),
 	     person("Tracy","Ke",role="ctb"),
+	     person("Eric","Weine",role="ctb"),
              person("Matthew","Stephens",role="aut"))
-URL: https://github.com/stephenslab/fastTopics
+URL: https://stephenslab.github.io/fastTopics/,
+        https://github.com/stephenslab/fastTopics
 BugReports: https://github.com/stephenslab/fastTopics/issues
 Depends: R (>= 3.3.0)
 Description: Implements fast, scalable optimization algorithms for
@@ -28,25 +30,26 @@ Description: Implements fast, scalable optimization algorithms for
     non-negative matrix factorization. The package provides tools to
     compare, annotate and visualize model fits, including functions to
     efficiently create "structure plots" and identify key features in
-    topics. The 'fastTopics' package is a successor to the 'CountClust'
-    package. Note that the 'fastTopicis' package on GitHub has more 
-    vignettes illustrating application to single-cell RNA-seq data.
+    topics. The 'fastTopics' package is a successor to the
+    'CountClust' package. For more information, see
+    <doi:10.48550/arXiv.2105.13440> and
+    <doi:10.1186/s13059-023-03067-9>.
 License: BSD_2_clause + file LICENSE
 Copyright: inst/COPYRIGHTS
 SystemRequirements: GNU make
 Imports: graphics, utils, methods, stats, Matrix, gtools, quadprog,
-        irlba, dplyr, Rtsne, uwot, ashr, Rcpp (>= 1.0.1), RcppParallel
-        (>= 4.4.1), parallel, progress, pbapply, ggplot2 (>= 3.3.0),
-        ggrepel (>= 0.9.0), cowplot, plotly, htmlwidgets
-Suggests: NNLM, Ternary, testthat, knitr, rmarkdown, RhpcBLASctl
+        irlba, dplyr, Rtsne, uwot, ashr, Rcpp (>= 1.0.12), RcppParallel
+        (>= 5.1.7), RhpcBLASctl, parallel, progress, pbapply, ggplot2
+        (>= 3.3.0), ggrepel (>= 0.9.0), cowplot, plotly, htmlwidgets
+Suggests: NNLM, Ternary, testthat, knitr, rmarkdown
 LinkingTo: Rcpp, RcppParallel, RcppArmadillo
 Additional_repositories: https://stephenslab.github.io/nnlm-drat
 LazyData: true
 LazyDataCompression: xz
 NeedsCompilation: yes
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 VignetteBuilder: knitr
-Packaged: 2024-01-15 18:33:14 UTC; pcarbo
+Packaged: 2024-06-28 18:29:36 UTC; pcarbo
 Author: Peter Carbonetto [aut, cre],
   Kevin Luo [aut],
   Kushal Dey [aut],
@@ -57,7 +60,8 @@ Author: Peter Carbonetto [aut, cre],
   Paul C. Boutros [ctb],
   Minzhe Wang [ctb],
   Tracy Ke [ctb],
+  Eric Weine [ctb],
   Matthew Stephens [aut]
 Maintainer: Peter Carbonetto <peter.carbonetto@gmail.com>
 Repository: CRAN
-Date/Publication: 2024-01-15 23:30:09 UTC
+Date/Publication: 2024-06-29 06:50:15 UTC

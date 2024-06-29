@@ -86,6 +86,21 @@
 #'   \code{\link[RcppParallel]{defaultNumThreads}}. This setting is
 #'   ignored for the multiplicative upates (\code{method = "mu"}).}
 #'
+#' \item{\code{nc.blas}}{Number of threads used in the numerical
+#'   linear algebra library (e.g., OpenBLAS), if available. For best
+#'   performance, we recommend setting this to 1 (i.e., no
+#'   multithreading).}
+#' 
+#' \item{\code{min.delta.loglik}}{Stop performing updates if the
+#'   difference in the Poisson NMF log-likelihood between two successive
+#'   updates is less than \code{min.delta.loglik}. This should not be
+#'   kept at zero when \code{control$extrapolate = TRUE} because the
+#'   extrapolated updates are expected to occasionally keep the
+#'   likelihood unchanged. Ignored if \code{min.delta.loglik < 0}.}
+#'
+#' \item{\code{min.res}}{Stop performing updates if the maximum KKT
+#'   residual is less than \code{min.res}. Ignored if \code{min.res < 0}.}
+#' 
 #' \item{\code{minval}}{A small, positive constant used to safeguard
 #'   the multiplicative updates. The safeguarded updates are implemented
 #'   as \code{F <- pmax(F1,minval)} and \code{L <- pmax(L1,minval)},
@@ -144,8 +159,8 @@
 #'   \code{init_poisson_nmf}, or from a previous call to
 #'   \code{fit_poisson_nmf}.
 #'
-#' @param numiter The number of updates of the factors and loadings to
-#'   perform.
+#' @param numiter The maximum number of updates of the factors and
+#'   loadings to perform.
 #'
 #' @param update.factors A numeric vector specifying which factors
 #'   (rows of \code{F}) to update. By default, all factors are
@@ -241,7 +256,8 @@
 #'   last iteration that improved the solution.}
 #' 
 #' \item{progress}{A data frame containing detailed information about
-#'   the algorithm's progress. The data frame should have \code{numiter}
+#'   the algorithm's progress. The data frame should have at most
+#'   \code{numiter}
 #'   rows. The columns of the data frame are: \dQuote{iter}, the
 #'   iteration number; \dQuote{loglik}, the Poisson NMF log-likelihood
 #'   at the current best factor and loading estimates;
@@ -327,6 +343,8 @@
 #' @useDynLib fastTopics
 #'
 #' @importFrom utils modifyList
+#' @importFrom RhpcBLASctl blas_set_num_threads
+#' @importFrom RhpcBLASctl blas_get_num_procs
 #'
 #' @export
 #'
@@ -393,7 +411,9 @@ fit_poisson_nmf <- function (X, k, fit0, numiter = 100,
       control$extrapolate)
     stop("control$extrapolate cannot be TRUE when all factors or loadings ",
          "are fixed")
-  control$nc <- initialize.multithreading(control$nc)
+  control$nc <- initialize.multithreading(control$nc,verbose != "none")
+  ncb <- blas_get_num_procs()
+  blas_set_num_threads(control$nc.blas)
   
   # Only one of "k" and "fit0" should be provided. If argument "k" is
   # given, generate a random initialization of the factors and
@@ -426,9 +446,10 @@ fit_poisson_nmf <- function (X, k, fit0, numiter = 100,
       method.text <- "SCD"
     else if (method == "ccd")
       method.text <- "CCD"
-    cat(sprintf("Running %d %s updates, %s extrapolation ",numiter,
-        method.text,ifelse(control$extrapolate,"with","without")))
-    cat("(fastTopics 0.6-163).\n")
+    cat(sprintf("Running at most %d %s updates, %s extrapolation ",
+                numiter,method.text,
+                ifelse(control$extrapolate,"with","without")))
+    cat("(fastTopics 0.6-186).\n")
   }
   
   # INITIALIZE ESTIMATES
@@ -452,6 +473,9 @@ fit_poisson_nmf <- function (X, k, fit0, numiter = 100,
                                    update.loadings,method,control,
                                    verbose)
 
+  # Restore the BLAS settings.
+  blas_set_num_threads(ncb)
+  
   # Output the updated "fit".
   fit$progress     <- rbind(fit0$progress,fit$progress)
   dimnames(fit$F)  <- dimnames(fit0$F)
@@ -483,6 +507,7 @@ fit_poisson_nmf_main_loop <- function (X, fit, numiter, update.factors,
                        "extrapolate","beta","betamax","timing")
 
   # Iterate the updates of the factors and loadings.
+  converged <- FALSE
   for (i in 1:numiter) {
     fit0 <- fit
     t1   <- proc.time()
@@ -510,7 +535,8 @@ fit_poisson_nmf_main_loop <- function (X, fit, numiter, update.factors,
     t2 <- proc.time()
 
     # Update the iteration number.
-    fit$iter <- fit$iter + 1
+    fit$iter    <- fit$iter + 1
+    loglik.diff <- fit0$loss - fit$loss
     
     # Update the "progress" data frame with the log-likelihood,
     # deviance, and other quantities, and report the algorithm's
@@ -522,9 +548,10 @@ fit_poisson_nmf_main_loop <- function (X, fit, numiter, update.factors,
     progress[i,"loglik.multinom"] <-
       loglik.const - fit$loss - sum(loglik_size_factors(X,fit$F,fit$L))
     progress[i,"dev"]         <- dev.const + 2*fit$loss
-    progress[i,"res"]         <- with(poisson_nmf_kkt(X,fit$F,fit$L),
-                                      max(abs(rbind(F[update.factors,],
-                                                    L[update.loadings,]))))
+    res <- with(poisson_nmf_kkt(X,fit$F,fit$L),
+                max(abs(rbind(F[update.factors,],
+                              L[update.loadings,]))))
+    progress[i,"res"]         <- res
     progress[i,"delta.f"]     <- max(abs(fit$F - fit0$F))
     progress[i,"delta.l"]     <- max(abs(fit$L - fit0$L))
     progress[i,"beta"]        <- fit$beta
@@ -539,9 +566,33 @@ fit_poisson_nmf_main_loop <- function (X, fit, numiter, update.factors,
                   progress[i,"res"],progress[i,"delta.f"],
                   progress[i,"delta.l"],progress[i,"nonzeros.f"],
                   progress[i,"nonzeros.l"],extrapolate * progress[i,"beta"]))
+    if (control$min.res >= 0 & res < control$min.res) {
+      if (verbose == "progressbar")
+        pb$terminate()
+      cat(sprintf("Stopping condition is met at iteration %d: ",i))
+      cat(sprintf("max. KKT residual < %0.2e\n",control$min.res))
+      converged <- TRUE
+      break
+    } else if (control$min.delta.loglik >= 0 &
+               loglik.diff < control$min.delta.loglik) {
+      if (verbose == "progressbar")
+        pb$terminate()
+      cat(sprintf("Stopping condition is met at iteration %d: ",i))
+      cat(sprintf("change in NMF loglik < %0.2e\n",
+                  control$min.delta.loglik))
+      converged <- TRUE
+      break
+    }
   }
 
+  # Print a warning if one or more of the stopping criteria were not
+  # satisfied.
+  if (!converged & with(control,min.res >= 0 | min.delta.loglik >= 0))
+    warning(sprintf(paste("One or both stopping conditions were not met",
+                          "within %d iterations"),numiter))
+  
   # Output the updated "fit".
+  progress <- progress[1:i,]    
   fit$progress <- progress
   return(fit)
 }
@@ -755,10 +806,13 @@ safeguard.fit <- function (fit, minval) {
 fit_poisson_nmf_control_default <- function()
   list(numiter           = 4,
        init.numiter      = 10,
+       min.delta.loglik  = -1,
+       min.res           = -1,
        minval            = 1e-10,
        eps               = 1e-8,
        zero.threshold    = 1e-6,
        nc                = 1,
+       nc.blas           = 1,
        extrapolate       = FALSE,
        extrapolate.reset = 20,
        beta.increase     = 1.1,
