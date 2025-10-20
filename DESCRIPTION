@@ -1,8 +1,8 @@
 Encoding: UTF-8
 Type: Package
 Package: fastTopics
-Version: 0.6-192
-Date: 2024-07-08
+Version: 0.7-30
+Date: 2025-10-17
 Title: Fast Algorithms for Fitting Topic Models and Non-Negative Matrix
         Factorizations to Count Data
 Authors@R: c(person("Peter","Carbonetto",role=c("aut","cre"),
@@ -42,7 +42,8 @@ SystemRequirements: GNU make
 Imports: graphics, utils, methods, stats, Matrix, gtools, quadprog,
         irlba, dplyr, Rtsne, uwot, ashr, Rcpp (>= 1.0.12), RcppParallel
         (>= 5.1.7), RhpcBLASctl, parallel, progress, pbapply, ggplot2
-        (>= 3.3.0), ggrepel (>= 0.9.0), cowplot, plotly, htmlwidgets
+        (>= 3.3.0), ggrepel (>= 0.9.0), cowplot, plotly, reshape2,
+        htmlwidgets
 Suggests: Ternary, testthat, knitr, rmarkdown
 LinkingTo: Rcpp, RcppParallel, RcppArmadillo
 LazyData: true
@@ -50,7 +51,7 @@ LazyDataCompression: xz
 NeedsCompilation: yes
 RoxygenNote: 7.3.1
 VignetteBuilder: knitr
-Packaged: 2024-07-08 18:12:36 UTC; pcarbo
+Packaged: 2025-10-17 17:05:23 UTC; pcarbo
 Author: Peter Carbonetto [aut, cre],
   Kevin Luo [aut],
   Kushal Dey [aut],
@@ -65,4 +66,4 @@ Author: Peter Carbonetto [aut, cre],
   Matthew Stephens [aut]
 Maintainer: Peter Carbonetto <peter.carbonetto@gmail.com>
 Repository: CRAN
-Date/Publication: 2024-07-09 10:00:06 UTC
+Date/Publication: 2025-10-20 22:50:02 UTC

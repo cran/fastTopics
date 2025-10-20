@@ -27,7 +27,13 @@ structure_plot_default_embed_method(fit, ...)
 
 \method{plot}{multinom_topic_model_fit}(x, ...)
 
-structure_plot_ggplot_call(dat, colors, ticks = NULL, font.size = 9)
+structure_plot_ggplot_call(
+  dat,
+  colors,
+  ticks = NULL,
+  font.size = 9,
+  linewidth = 0
+)
 }
 \arguments{
 \item{fit}{An object of class \dQuote{poisson_nmf_fit} or
@@ -110,6 +116,9 @@ axis, and their names. For data that are not grouped, use
 \code{ticks = NULL}.}
 
 \item{font.size}{Font size used in plot.}
+
+\item{linewidth}{Passed as the \dQuote{linewidth} argument to
+\code{\link[ggplot2]{geom_col}}.}
 }
 \value{
 A \code{ggplot} object.
@@ -138,8 +147,14 @@ arrangement of the samples is, by default, generated automatically
 by performing a 1-d embedding of the samples.
 }
 \examples{
-\donttest{
+# Create a Structure plot to visualize topic modeling results 
+# from the 20 Newsgroups.
 set.seed(1)
+data(newsgroups)
+structure_plot(newsgroups$L,grouping = newsgroups$topics,
+               topics = paste0("k",c(1,3,6:10)),gap = 10)
+
+\donttest{
 data(pbmc_facs)
 
 # Get the multinomial topic model fitted to the

@@ -97,8 +97,14 @@
 #' 2381–2385.
 #'
 #' @examples
-#' \donttest{
+#' # Create a Structure plot to visualize topic modeling results 
+#' # from the 20 Newsgroups.
 #' set.seed(1)
+#' data(newsgroups)
+#' structure_plot(newsgroups$L,grouping = newsgroups$topics,
+#'                topics = paste0("k",c(1,3,6:10)),gap = 10)
+#' 
+#' \donttest{
 #' data(pbmc_facs)
 #'
 #' # Get the multinomial topic model fitted to the
@@ -328,6 +334,9 @@ plot.multinom_topic_model_fit <- function (x, ...)
 #'   \code{ticks = NULL}.
 #'
 #' @param font.size Font size used in plot.
+#'
+#' @param linewidth Passed as the \dQuote{linewidth} argument to
+#'   \code{\link[ggplot2]{geom_col}}.
 #' 
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 aes_string
@@ -344,19 +353,18 @@ plot.multinom_topic_model_fit <- function (x, ...)
 #' @export
 #'
 structure_plot_ggplot_call <- function (dat, colors, ticks = NULL,
-                                        font.size = 9)
-  ggplot(dat,aes_string(x = "sample",y = "prop",color = "topic",
-                        fill = "topic")) +
-    geom_col() +
+                                        font.size = 9, linewidth = 0)
+  ggplot(dat,aes_string(x = "sample",y = "prop",fill = "topic")) +
+    geom_col(linewidth = linewidth,width = 1) +
     scale_x_continuous(limits = c(0,max(dat$sample) + 1),breaks = ticks,
                        labels = names(ticks)) +
-    scale_color_manual(values = colors) +
     scale_fill_manual(values = colors) +
     labs(x = "",y = "topic proportion") +
     theme_cowplot(font.size) +
-    theme(axis.line   = element_blank(),
-          axis.ticks  = element_blank(),
-          axis.text.x = element_text(angle = 45,hjust = 1))
+    theme(axis.line       = element_blank(),
+          axis.ticks      = element_blank(),
+          axis.text.x     = element_text(angle = 45,hjust = 1),
+          legend.position = "bottom")
 
 # This is used by structure_plot to create a data frame suitable for
 # plotting with 'ggplot'. Input argument L is the topic proportions
@@ -396,7 +404,7 @@ compile_grouped_structure_plot_data <- function (L, topics, grouping,
     out$sample <- out$sample + m
     n          <- length(i)
     dat        <- rbind(dat,out)
-    ticks[j]   <- m + n/2
+    ticks[j]   <- m + (n + 1)/2
     m          <- m + n + gap
   }
   return(list(dat = dat,ticks = ticks))

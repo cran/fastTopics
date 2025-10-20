@@ -12,7 +12,7 @@
 
 <meta name="author" content="Peter Carbonetto" />
 
-<meta name="date" content="2024-07-08" />
+<meta name="date" content="2025-10-17" />
 
 <title>Exploring the close relationship between topic modeling and non-negative matrix factorization for count data</title>
 
@@ -51,7 +51,7 @@ overflow: visible;
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -341,7 +341,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore">Exploring the close relationship between
 topic modeling and non-negative matrix factorization for count data</h1>
 <h4 class="author">Peter Carbonetto</h4>
-<h4 class="date">2024-07-08</h4>
+<h4 class="date">2025-10-17</h4>
 
 
 
@@ -356,8 +356,9 @@ modeling and non-negative matrix factorization (NMF).</p>
 <div id="poisson-non-negative-matrix-factorization" class="section level2">
 <h2>Poisson non-negative matrix factorization</h2>
 <p>In Poisson non-negative matrix factorization (<a href="http://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-factorization">Lee
-&amp; Seung, 2001</a>), counts <span class="math inline">\(x_{ij}\)</span> in an <span class="math inline">\(n \times m\)</span> matrix, <span class="math inline">\(X\)</span>, are modeled by the Poisson
-distribution: <span class="math display">\[
+&amp; Seung, 2001</a>), counts <span class="math inline">\(x_{ij}\)</span> in an <span class="math inline">\(n
+\times m\)</span> matrix, <span class="math inline">\(X\)</span>, are
+modeled by the Poisson distribution: <span class="math display">\[
 x_{ij} \sim \mathrm{Poisson}(\lambda_{ij}).
 \]</span> Each Poisson rate, <span class="math inline">\(\lambda_{ij}\)</span>, is a simple linear
 combination of parameters <span class="math inline">\(f_{jk} \geq 0,
