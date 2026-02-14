@@ -1,4 +1,4 @@
-0f550f6389ce70e4ec8373bf96eaefaf *DESCRIPTION
+f58fec9254e28629dba1a89e732b41a6 *DESCRIPTION
 f36d5d2d7bdc86f233ad66a3524608a9 *LICENSE
 37e046a1e6f5b045b58df9c60db09e6c *NAMESPACE
 7fb9e04ed078dfebc330a45d26519fa0 *R/RcppExports.R
@@ -11,7 +11,7 @@ c7d62a395749b4be34ecee3848812f9c *R/datasim.R
 ba94a7b0976e948575fb304a48e71351 *R/embedding_plots.R
 8c2f76b86b73e40e837175f9b5f1200c *R/embeddings.R
 18e9e78a56fab7e3319ad228f7b87071 *R/fit_multinom_model.R
-d633aabe43704545e464f861f410381f *R/fit_poisson_nmf.R
+435a510e49eebd6cd7000c9f854919f5 *R/fit_poisson_nmf.R
 d07ee1f0e411c77e911d45a95426c7e3 *R/fit_topic_model.R
 6afe02ca0f7f3ae0668832b8a85fcbea *R/homer.R
 a9ff5e0025fbf5147413415f1c107397 *R/init_poisson_nmf.R
@@ -47,13 +47,13 @@ f5372467d2d5d6e01c59943c1df2da3c *inst/CITATION
 3cb093e58beec5083d0621fa36f13c1e *inst/COPYRIGHTS
 6c7a1f7ecf2959673c40c73143bf656f *inst/doc/relationship.R
 1eee2d4e590e5ff3f341cfa6dd219d3a *inst/doc/relationship.Rmd
-7f3d42faf59a00179f6ef6196331d4de *inst/doc/relationship.html
+90f9b568154306aefbd7df9361404318 *inst/doc/relationship.html
 d640094f0c99e507a4d2436d0985f244 *inst/doc/single_cell_rnaseq_basic.R
 e5b5e0ea5b0883b78beb5d1332cfa174 *inst/doc/single_cell_rnaseq_basic.Rmd
-91048876eda4440805e0b0254f62b4d2 *inst/doc/single_cell_rnaseq_basic.html
-c81bc27451cd67f7b711b58cc7b3dc0c *inst/doc/topics_vs_clusters.R
-9ce9dd6a0d8bbb7401cab15e9894d4ab *inst/doc/topics_vs_clusters.Rmd
-c21d19374ce8c8cfaae8519cca7a68a5 *inst/doc/topics_vs_clusters.html
+1002be248954f53e2f75d15683a65a3e *inst/doc/single_cell_rnaseq_basic.html
+6559df6f3a651a8c6f29b843ee26607e *inst/doc/topics_vs_clusters.R
+d06f4297e7c201c4bc76b3e992b35c0f *inst/doc/topics_vs_clusters.Rmd
+28807d63e598b5f3167d484387d81e68 *inst/doc/topics_vs_clusters.html
 929d0fbf91cc2ca013c4a53909fb49b4 *man/annotation_heatmap.Rd
 32c4c79cc2df50f0a0830302c457f455 *man/compare_fits.Rd
 5ca7996185ff929c8184a45693328881 *man/de_analysis.Rd
@@ -110,4 +110,4 @@ c7cb94652db6586e0630238962f8b44b *tests/testthat/test_poisson2multinom.R
 60c5444a19f2396f3e56126f4ad876b3 *tests/testthat/test_summary.R
 1eee2d4e590e5ff3f341cfa6dd219d3a *vignettes/relationship.Rmd
 e5b5e0ea5b0883b78beb5d1332cfa174 *vignettes/single_cell_rnaseq_basic.Rmd
-9ce9dd6a0d8bbb7401cab15e9894d4ab *vignettes/topics_vs_clusters.Rmd
+d06f4297e7c201c4bc76b3e992b35c0f *vignettes/topics_vs_clusters.Rmd

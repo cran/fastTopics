@@ -5,26 +5,26 @@ knitr::opts_chunk$set(comment = "#",collapse = TRUE,results = "hold",
 ## ----load-pkgs, message=FALSE-------------------------------------------------
 library(ggplot2)
 library(cowplot)
-library(Ternary)
 library(Rtsne)
 library(fastTopics)
 
 ## ----simulate-data------------------------------------------------------------
 set.seed(1)
-X <- simulate_toy_gene_data(n = 400,m = 40,k = 3,s = 1000)$X
+dat <- simulate_toy_gene_data(n = 400,m = 40,k = 3,s = 1000)
+X <- dat$X
 
 ## ----fit-multinom-topic-model, message=FALSE----------------------------------
 fit <- fit_poisson_nmf(X,k = 3,numiter = 100,verbose = "none",
                        control = list(extrapolate = TRUE))
 fit <- poisson2multinom(fit)
 
-## ----plot-topic-proportions, fig.height=3, fig.width=3------------------------
-par0 <- par(mar = c(0,0,0,0))
-pdat <- as.data.frame(fit$L)
-TernaryPlot(alab = "k1",blab = "k2",clab = "k3",grid.col = "skyblue",
-            grid.minor.lines = 0)
-TernaryPoints(pdat,pch = 21,col = "white",bg = "black",cex = 0.8)
-par(par0)
+## ----plot-topic-proportions, fig.height=1.5, fig.width=5, results="hide", message=FALSE----
+grouping <- as.numeric(rowMeans(abs(dat$L - 0.33)) > 0.1)
+i <- which(grouping == 1)
+grouping[i] <- apply(dat$L[i,],1,which.max)
+grouping <- factor(grouping)
+structure_plot(fit,grouping = grouping,gap = 5) +
+  theme(axis.text.x = element_blank())
 
 ## ----tsne-from-counts-1, fig.height=3, fig.width=3----------------------------
 tsne1 <- Rtsne(X,2,pca = FALSE,normalize = FALSE)
